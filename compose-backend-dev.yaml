@@ -1,0 +1,24 @@
+---
+
+## Salt.Box Compose metric override file for dev-mode.
+
+services:
+
+  saltbox-metric: &metric
+    build:
+      context: $METRIC_BUILD_DIR
+      target: dev
+    environment:
+      - LOG_LEVEL=DEBUG
+      - DISCOVERY_LOG_LEVEL=DEBUG
+    tty: true  # colorize logs
+    image: 'saltbox-metric:dev'
+    volumes:
+      - '${METRIC_BUILD_DIR}:/mnt/saltbox-metric'
+      - '${SDK_DIR}:/mnt/saltbox-sdk'
+    tmpfs:
+      - '/mnt/saltbox-sdk/build/'
+      - '/mnt/saltbox-sdk/saltbox_sdk.egg-info/'
+
+#  saltbox-metric-app:
+#    <<: *metric

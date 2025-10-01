@@ -1,0 +1,87 @@
+x-default-service: &default
+  restart: 'on-failure'
+  stop_grace_period: ${STOP_GRACE_PERIOD}
+
+services:
+  saltbox-metric: &metric
+    <<: *default
+    image: '${IMAGE_REGISTRY}/saltbox-metric-backend:${METRIC_IMAGE_TAG}'
+    command: 'uvicorn'
+    environment:
+      LOG_LEVEL: '${METRIC_LOG_LEVEL:-info}'
+      BASE_URL_ROOT_PATH: '${METRIC_BACKEND_PATH}'
+      TIMEOUT_GRACEFUL_SHUTDOWN: '${BACKEND_SHUTDOWN_TIMEOUT_SEC}'
+      BASIC_AUTH_USERNAME: '${BASIC_AUTH_USERNAME:-}'
+      BASIC_AUTH_PASSWORD: '${BASIC_AUTH_PASSWORD:-}'
+      # Mongo environment variables
+      MONGO_HOST: '${METRIC_MONGO_HOST}'
+      MONGO_PORT: '${METRIC_MONGO_PORT}'
+      MONGO_DB: '${METRIC_MONGO_DB}'
+      MONGO_USER: '${METRIC_MONGO_USER}'
+      # Redis environment variables
+      REDIS_CA_CERT: '/etc/redis/certs/ca.crt'
+      REDIS_TASKIQ_DB: 1
+      REDIS_TASKIQ_HOST: redis-taskiq
+      REDIS_TASKIQ_PASSWORD_SECRET: '/run/secrets/redis_taskiq_password'
+      REDIS_TASKIQ_PORT: 6379
+      REDIS_TASKIQ_USERNAME: '${REDIS_TASKIQ_USERNAME}'
+      REDIS_URL: 'rediss://redis-salt:6379/1'
+      REDIS_USERNAME: '${REDIS_SALT_USERNAME}'
+      # Keycloack  environment variables
+      KEYCLOAK_FRONT_URL: 'https://${WEB_SERVER_OUTER_SOCKET}${KEYCLOAK_BASE_URL}'
+      KEYCLOAK_SERVER_URL: 'http://keycloak:8080${KEYCLOAK_BASE_URL}'
+      KEYCLOAK_REALM: '${KEYCLOAK_REALM}'
+      KEYCLOAK_CLIENT: '${KEYCLOAK_CLIENT}'
+      # Gateway environment variables
+      DISCOVERY_SERVER_SCHEME: 'https'
+      DISCOVERY_SERVER_WS_SCHEME: 'wss'
+      DISCOVERY_SERVER_OUTER_SOCKET: '${WEB_SERVER_OUTER_SOCKET}'
+      DISCOVERY_DISCOVERY_URL: 'http://saltbox-gateway:${GATEWAY_HTTP_PORT}/api/discovery'
+      DISCOVERY_SERVICE_NAME: '${METRIC_SERVICE_NAME}'
+      DISCOVERY_SERVICE_TITLE: '${METRIC_SERVICE_TITLE}'
+      DISCOVERY_SERVICE_DESCRIPTION: '${METRIC_SERVICE_DESCRIPTION}'
+      DISCOVERY_SERVICE_VENDOR: '${METRIC_SERVICE_VENDOR}'
+      DISCOVERY_SERVICE_TYPE: '${METRIC_SERVICE_TYPE}'
+      DISCOVERY_INSTANCE_ID: '${METRIC_INSTANCE_ID}'
+      DISCOVERY_INSTANCE_HOST: '${METRIC_HOST}'
+      DISCOVERY_INSTANCE_PORT: '${METRIC_PORT:-8000}'
+      DISCOVERY_FRONT_CONTAINER_NAME: '${METRIC_FRONT_CONTAINER_NAME:-saltbox-metric-front}'
+      DISCOVERY_FRONT_CONTAINER_PORT: '${METRIC_FRONT_CONTAINER_PORT:-3000}'
+    volumes:
+      - type: volume
+        source: redis_salt_certs
+        target: '/etc/redis/certs/'
+        read_only: true
+      - 'saltbox_metric_var:/var/lib/saltbox-metric/'
+    secrets:
+      - redis_taskiq_password
+      - redis_salt_password
+      - mongo_admin_password
+      - keycloak_client_saltbox_core_password
+    expose:
+      - ${BACKEND_HTTP_PORT}
+    depends_on:
+      mongo:
+        condition: service_started
+        restart: false
+      redis-taskiq:
+        condition: service_started
+        restart: false
+      rabbitmq:
+        condition: service_healthy
+        restart: false
+
+#  saltbox-metric-app:
+#    <<: *metric
+#    command: 'shell saltbox-metric-app'
+#    expose: [ ]
+
+#  saltbox-metric-frontend:
+#    <<: *default
+#    image: '${IMAGE_REGISTRY}/saltbox-metric-frontend:${FRONTEND_IMAGE_TAG}'
+#    expose:
+#      - ${FRONTEND_HTTP_PORT}
+
+
+volumes:
+  saltbox_metric_var: {}
