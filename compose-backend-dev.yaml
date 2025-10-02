@@ -20,5 +20,5 @@ services:
       - '/mnt/saltbox-sdk/build/'
       - '/mnt/saltbox-sdk/saltbox_sdk.egg-info/'
 
-#  saltbox-metric-app:
-#    <<: *metric
+  saltbox-metric-app:
+    <<: *metric

@@ -13,19 +13,9 @@ services:
       TIMEOUT_GRACEFUL_SHUTDOWN: '${BACKEND_SHUTDOWN_TIMEOUT_SEC}'
       BASIC_AUTH_USERNAME: '${BASIC_AUTH_USERNAME:-}'
       BASIC_AUTH_PASSWORD: '${BASIC_AUTH_PASSWORD:-}'
-      # Mongo environment variables
-      MONGO_HOST: '${METRIC_MONGO_HOST}'
-      MONGO_PORT: '${METRIC_MONGO_PORT}'
-      MONGO_DB: '${METRIC_MONGO_DB}'
-      MONGO_USER: '${METRIC_MONGO_USER}'
       # Redis environment variables
       REDIS_CA_CERT: '/etc/redis/certs/ca.crt'
-      REDIS_TASKIQ_DB: 1
-      REDIS_TASKIQ_HOST: redis-taskiq
-      REDIS_TASKIQ_PASSWORD_SECRET: '/run/secrets/redis_taskiq_password'
-      REDIS_TASKIQ_PORT: 6379
-      REDIS_TASKIQ_USERNAME: '${REDIS_TASKIQ_USERNAME}'
-      REDIS_URL: 'rediss://redis-salt:6379/1'
+      REDIS_URL: 'rediss://redis-salt:6379/2'
       REDIS_USERNAME: '${REDIS_SALT_USERNAME}'
       # Keycloack  environment variables
       KEYCLOAK_FRONT_URL: 'https://${WEB_SERVER_OUTER_SOCKET}${KEYCLOAK_BASE_URL}'
@@ -71,10 +61,10 @@ services:
         condition: service_healthy
         restart: false
 
-#  saltbox-metric-app:
-#    <<: *metric
-#    command: 'shell saltbox-metric-app'
-#    expose: [ ]
+  saltbox-metric-app:
+    <<: *metric
+    command: 'shell saltbox-metric-app'
+    expose: [ ]
 
 #  saltbox-metric-frontend:
 #    <<: *default
