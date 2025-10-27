@@ -44,14 +44,10 @@ services:
     secrets:
       - redis_taskiq_password
       - redis_salt_password
-      - mongo_admin_password
       - keycloak_client_saltbox_core_password
     expose:
       - ${BACKEND_HTTP_PORT}
     depends_on:
-      mongo:
-        condition: service_started
-        restart: false
       redis-taskiq:
         condition: service_started
         restart: false
