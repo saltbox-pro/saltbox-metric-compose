@@ -46,7 +46,7 @@ services:
       - redis_salt_password
       - keycloak_client_saltbox_core_password
     expose:
-      - ${BACKEND_HTTP_PORT}
+      - '${CORE_PORT}'  # FIXME Inentory looks to have own backend port variable
     depends_on:
       redis-taskiq:
         condition: service_started
@@ -103,7 +103,7 @@ services:
       GF_AUTH_GENERIC_OAUTH_API_URL: 'http://keycloak:8080${KEYCLOAK_BASE_URL}/realms/${KEYCLOAK_REALM}/protocol/openid-connect/userinfo'
       GF_AUTH_GENERIC_OAUTH_ROLE_ATTRIBUTE_PATH: "contains(resource_access.grafana.roles, 'grafana_admin') && 'Admin' || 'Viewer'"
       GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH: '/etc/grafana/provisioning/dashboards/dashboard.json'
-      GF_LOG_LEVEL: '${BACKEND_LOG_LEVEL}'
+      GF_LOG_LEVEL: '${METRIC_LOG_LEVEL:-info}'
     secrets:
       - keycloak_client_grafana_password
     ports:
