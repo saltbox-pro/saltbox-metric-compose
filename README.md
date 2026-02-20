@@ -24,3 +24,7 @@ _UPDATE_AND_RUN_EXTRA_ENV_FILES='../saltbox-metric-compose/.env'
 ```sh
 sudo ./bin/update_and_run.sh
 ```
+
+> **INFO** Error `/var/lib/docker/containers: permission denied` on start
+> usually means `$METRIC_DOCKER_*` variables of [`.env`](./.env) should be
+> overrided.

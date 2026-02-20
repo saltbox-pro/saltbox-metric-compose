@@ -109,9 +109,9 @@ services:
     ports:
       - '3000:3000'
     volumes:
-      - '../saltbox-metric-compose/metric.d/grafana/dashboards/dashboard.json:/etc/grafana/provisioning/dashboards/dashboard.json'
-      - '../saltbox-metric-compose/metric.d/grafana/dashboards/dashboard.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml:ro'
-      - '../saltbox-metric-compose/metric.d/grafana/datasources/datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml:ro'
+      - '${METRIC_OUTER_PATH}/metric.d/grafana/dashboards/dashboard.json:/etc/grafana/provisioning/dashboards/dashboard.json'
+      - '${METRIC_OUTER_PATH}/metric.d/grafana/dashboards/dashboard.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml:ro'
+      - '${METRIC_OUTER_PATH}/metric.d/grafana/datasources/datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml:ro'
       - 'grafana_var:/var/lib/grafana'
     depends_on:
       grafana-loki:
@@ -129,7 +129,7 @@ services:
     expose:
       - '3100'
     volumes:
-      - '../saltbox-metric-compose/metric.d/grafana/datasources/grafana-loki.yaml:/etc/loki/config.yaml:ro'
+      - '${METRIC_OUTER_PATH}/metric.d/grafana/datasources/grafana-loki.yaml:/etc/loki/config.yaml:ro'
       - 'grafana_loki_data:/data/grafana_loki'
     healthcheck:
       test: wget --quiet --tries=1 --output-document=- http://localhost:3100/ready | grep -q -w ready || exit 1
@@ -148,9 +148,9 @@ services:
       - '9080'
     volumes:
       - 'promtail_data:/data/promtail'
-      - '/var/lib/docker/containers:/var/lib/docker/containers:ro'
-      - '/var/run/docker.sock:/var/run/docker.sock'
-      - '../saltbox-metric-compose/metric.d/promtail.yaml:/etc/promtail/config.yaml:ro'
+      - '${METRIC_DOCKER_SOCKET}:/var/run/docker.sock'
+      - '${METRIC_DOCKER_CONTAINERS_PATH}:/var/lib/docker/containers:ro'
+      - '${METRIC_OUTER_PATH}/metric.d/promtail.yaml:/etc/promtail/config.yaml:ro'
     healthcheck:
           test: ["CMD-SHELL", "bash -c 'printf \"GET / HTTP/1.1\n\n\" > /dev/tcp/127.0.0.1/9080; exit $?;'"]
           start_period: 10s
@@ -168,7 +168,7 @@ services:
       ports:
         - '9090:9090'
       volumes:
-        - '../saltbox-metric-compose/metric.d/prometheus.yml:/etc/prometheus/prometheus.yml:ro'
+        - '${METRIC_OUTER_PATH}/metric.d/prometheus.yml:/etc/prometheus/prometheus.yml:ro'
         - 'prometheus_data:/data/prometheus'
 
 volumes:
