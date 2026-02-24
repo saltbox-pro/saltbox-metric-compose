@@ -78,7 +78,8 @@ services:
 
   grafana:
     <<: *default
-    image: grafana/grafana:12.0.2-security-01
+    build: 
+      context: '${METRIC_OUTER_PATH}'
     environment:
       GF_SERVER_PROTOCOL: 'http'
       GF_SERVER_SERVE_FROM_SUB_PATH: true
@@ -102,16 +103,12 @@ services:
       GF_AUTH_GENERIC_OAUTH_TOKEN_URL: 'http://keycloak:8080${KEYCLOAK_BASE_URL}/realms/${KEYCLOAK_REALM}/protocol/openid-connect/token'
       GF_AUTH_GENERIC_OAUTH_API_URL: 'http://keycloak:8080${KEYCLOAK_BASE_URL}/realms/${KEYCLOAK_REALM}/protocol/openid-connect/userinfo'
       GF_AUTH_GENERIC_OAUTH_ROLE_ATTRIBUTE_PATH: "contains(resource_access.grafana.roles, 'grafana_admin') && 'Admin' || 'Viewer'"
-      GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH: '/etc/grafana/provisioning/dashboards/dashboard.json'
       GF_LOG_LEVEL: '${METRIC_LOG_LEVEL:-info}'
     secrets:
       - keycloak_client_grafana_password
     ports:
       - '3000:3000'
     volumes:
-      - '${METRIC_OUTER_PATH}/metric.d/grafana/dashboards/dashboard.json:/etc/grafana/provisioning/dashboards/dashboard.json'
-      - '${METRIC_OUTER_PATH}/metric.d/grafana/dashboards/dashboard.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml:ro'
-      - '${METRIC_OUTER_PATH}/metric.d/grafana/datasources/datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml:ro'
       - 'grafana_var:/var/lib/grafana'
     depends_on:
       grafana-loki:
