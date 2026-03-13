@@ -1,0 +1,6 @@
+stages:
+  - .guard
+
+include:
+  - project: 'saltbox/ci-lib'
+    file: 'def-branch-merge-guard.yml'
