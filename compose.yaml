@@ -60,11 +60,11 @@ services:
     command: 'shell saltbox-metric-app'
     expose: [ ]
 
-#  saltbox-metric-frontend:
-#    <<: *default
-#    image: '${IMAGE_REGISTRY}/saltbox-metric-frontend:${FRONTEND_IMAGE_TAG}'
-#    expose:
-#      - ${FRONTEND_HTTP_PORT}
+  saltbox-metric-frontend:
+    <<: *default
+    image: '${IMAGE_REGISTRY}/saltbox-frontend-metric:${FRONTEND_IMAGE_TAG}'
+    expose:
+      - ${FRONTEND_HTTP_PORT}
 
   proxy:
     volumes:
