@@ -121,8 +121,6 @@ services:
   grafana-loki:
     <<: *default
     image: grafana/loki:3.4.5
-    environment:
-      TZ: '${GRAFANA_SYSTEM_TIMEZONE}'
     expose:
       - '3100'
     volumes:
