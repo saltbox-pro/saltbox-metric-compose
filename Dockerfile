@@ -1,5 +1,5 @@
 ARG GRAFANA_BASE_IMG="grafana/grafana:12.3.2-security-01"
-    
+
 FROM "${GRAFANA_BASE_IMG}"
 
 ARG GF_OUTER_DASHBOARD_CONFIG="./metric.d/grafana/dashboards/dashboard.json"

@@ -15,6 +15,8 @@ COMPOSE_FILE="${COMPOSE_FILE}:../saltbox-metric-compose/compose.yaml"
 # TODO Recheck the path
 # Multiple values separates by commas
 _UPDATE_AND_RUN_EXTRA_ENV_FILES='../saltbox-metric-compose/.env'
+# If differs from usual location
+#METRIC_OUTER_PATH='../RELATIVE_TO_SALTBOX_COMPOSE'
 ```
 
 - Optionally add to `override.env` new values for the [`.env`](./.env) file.
