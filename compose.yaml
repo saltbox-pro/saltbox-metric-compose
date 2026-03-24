@@ -1,5 +1,5 @@
 x-default-service: &default
-  restart: 'on-failure'
+  restart: 'always'
   stop_grace_period: ${STOP_GRACE_PERIOD}
 
 services:
