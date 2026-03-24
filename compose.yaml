@@ -68,8 +68,7 @@ services:
 
   proxy:
     volumes:
-      - '${METRIC_OUTER_PATH}/metric.d/proxy/nginx_include.conf:${WEB_SERVER_SALTBOX_INCLUDES_DIR}/30-metric.conf:ro'
-      - '${METRIC_OUTER_PATH}/metric.d/proxy/nginx_include.upstream.conf:/etc/nginx/sites-enabled.d/30-metric.upstream.conf:ro'
+      - ./proxy/includes/metrics.enabled.conf:/etc/nginx/includes/10-metrics.conf:ro
 
   keycloak-init:
     environment:
