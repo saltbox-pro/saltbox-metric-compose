@@ -1,5 +1,5 @@
 x-default-service: &default
-  restart: 'on-failure'
+  restart: 'always'
   stop_grace_period: ${STOP_GRACE_PERIOD}
 
 services:
@@ -60,15 +60,15 @@ services:
     command: 'shell saltbox-metric-app'
     expose: [ ]
 
-#  saltbox-metric-frontend:
-#    <<: *default
-#    image: '${IMAGE_REGISTRY}/saltbox-metric-frontend:${FRONTEND_IMAGE_TAG}'
-#    expose:
-#      - ${FRONTEND_HTTP_PORT}
+  saltbox-metric-frontend:
+    <<: *default
+    image: '${IMAGE_REGISTRY}/saltbox-frontend-metric:${FRONTEND_IMAGE_TAG}'
+    expose:
+      - ${FRONTEND_HTTP_PORT}
 
   proxy:
     volumes:
-      - ./proxy/includes/metrics.enabled.conf:/etc/nginx/includes/10-metrics.conf:ro
+      - '${METRIC_OUTER_PATH}/nginx_include.conf:${WEB_SERVER_SALTBOX_INCLUDES_DIR}/10-metrics.conf:ro'
 
   keycloak-init:
     environment:
@@ -78,7 +78,8 @@ services:
 
   grafana:
     <<: *default
-    image: grafana/grafana:12.0.2-security-01
+    build: 
+      context: '${METRIC_OUTER_PATH}'
     environment:
       GF_SERVER_PROTOCOL: 'http'
       GF_SERVER_SERVE_FROM_SUB_PATH: true
@@ -102,16 +103,12 @@ services:
       GF_AUTH_GENERIC_OAUTH_TOKEN_URL: 'http://keycloak:8080${KEYCLOAK_BASE_URL}/realms/${KEYCLOAK_REALM}/protocol/openid-connect/token'
       GF_AUTH_GENERIC_OAUTH_API_URL: 'http://keycloak:8080${KEYCLOAK_BASE_URL}/realms/${KEYCLOAK_REALM}/protocol/openid-connect/userinfo'
       GF_AUTH_GENERIC_OAUTH_ROLE_ATTRIBUTE_PATH: "contains(resource_access.grafana.roles, 'grafana_admin') && 'Admin' || 'Viewer'"
-      GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH: '/etc/grafana/provisioning/dashboards/dashboard.json'
       GF_LOG_LEVEL: '${METRIC_LOG_LEVEL:-info}'
     secrets:
       - keycloak_client_grafana_password
     ports:
       - '3000:3000'
     volumes:
-      - '../saltbox-metric-compose/metric.d/grafana/dashboards/dashboard.json:/etc/grafana/provisioning/dashboards/dashboard.json'
-      - '../saltbox-metric-compose/metric.d/grafana/dashboards/dashboard.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml:ro'
-      - '../saltbox-metric-compose/metric.d/grafana/datasources/datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml:ro'
       - 'grafana_var:/var/lib/grafana'
     depends_on:
       grafana-loki:
@@ -124,12 +121,10 @@ services:
   grafana-loki:
     <<: *default
     image: grafana/loki:3.4.5
-    environment:
-      TZ: '${GRAFANA_SYSTEM_TIMEZONE}'
     expose:
       - '3100'
     volumes:
-      - '../saltbox-metric-compose/metric.d/grafana/datasources/grafana-loki.yaml:/etc/loki/config.yaml:ro'
+      - '${METRIC_OUTER_PATH}/metric.d/grafana/datasources/grafana-loki.yaml:/etc/loki/config.yaml:ro'
       - 'grafana_loki_data:/data/grafana_loki'
     healthcheck:
       test: wget --quiet --tries=1 --output-document=- http://localhost:3100/ready | grep -q -w ready || exit 1
@@ -148,9 +143,9 @@ services:
       - '9080'
     volumes:
       - 'promtail_data:/data/promtail'
-      - '/var/lib/docker/containers:/var/lib/docker/containers:ro'
-      - '/var/run/docker.sock:/var/run/docker.sock'
-      - '../saltbox-metric-compose/metric.d/promtail.yaml:/etc/promtail/config.yaml:ro'
+      - '${METRIC_DOCKER_SOCKET}:/var/run/docker.sock'
+      - '${METRIC_DOCKER_CONTAINERS_PATH}:/var/lib/docker/containers:ro'
+      - '${METRIC_OUTER_PATH}/metric.d/promtail.yaml:/etc/promtail/config.yaml:ro'
     healthcheck:
           test: ["CMD-SHELL", "bash -c 'printf \"GET / HTTP/1.1\n\n\" > /dev/tcp/127.0.0.1/9080; exit $?;'"]
           start_period: 10s
@@ -168,7 +163,7 @@ services:
       ports:
         - '9090:9090'
       volumes:
-        - '../saltbox-metric-compose/metric.d/prometheus.yml:/etc/prometheus/prometheus.yml:ro'
+        - '${METRIC_OUTER_PATH}/metric.d/prometheus.yml:/etc/prometheus/prometheus.yml:ro'
         - 'prometheus_data:/data/prometheus'
 
 volumes:

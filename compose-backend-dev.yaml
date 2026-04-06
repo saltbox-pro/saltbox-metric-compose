@@ -2,11 +2,23 @@
 
 ## Salt.Box Compose metric override file for dev-mode.
 
-services:
+x-metric-watch: &metric-watch
+  - action: sync+restart
+    path: '${METRIC_BUILD_DIR}'
+    target: /mnt/saltbox-metric
+    ignore:
+      - saltbox_metric/__pycache__/
+      - '**/*.pyc'
+      - '**/*.egg-info/'
+  - action: rebuild
+    path: '${METRIC_BUILD_DIR}/requirements.txt'
+  - action: rebuild
+    path: '${METRIC_BUILD_DIR}/local_requirements.txt'
 
+services:
   saltbox-metric: &metric
     build:
-      context: $METRIC_BUILD_DIR
+      context: '${METRIC_BUILD_DIR}'
       target: dev
     environment:
       - LOG_LEVEL=DEBUG
@@ -19,6 +31,10 @@ services:
     tmpfs:
       - '/mnt/saltbox-sdk/build/'
       - '/mnt/saltbox-sdk/saltbox_sdk.egg-info/'
+    develop:
+      watch: *metric-watch
 
   saltbox-metric-app:
     <<: *metric
+    develop:
+      watch: *metric-watch

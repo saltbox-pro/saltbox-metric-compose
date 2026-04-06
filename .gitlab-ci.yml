@@ -1,0 +1,4 @@
+include:
+  # Requires standard stage `test`
+  - project: 'saltbox/ci-lib'
+    file: 'def-branch-merge-guard.yml'
