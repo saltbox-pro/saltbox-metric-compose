@@ -26,7 +26,7 @@ include:
 .build-prometheus-image:
   extends: .build-image
   variables:
-    DOCKERFILE: './grafana/Dockerfile'
+    DOCKERFILE: './prometheus/Dockerfile'
     REGISTRY_ADDITIONAL_PATH: '/prometheus'
 
 
