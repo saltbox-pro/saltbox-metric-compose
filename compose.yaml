@@ -114,7 +114,7 @@ services:
       grafana-loki:
         condition: service_healthy
       promtail:
-        condition: service_healthy
+        condition: service_started
       prometheus:
         condition: service_started
 
