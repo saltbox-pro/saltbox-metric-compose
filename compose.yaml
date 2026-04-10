@@ -79,7 +79,7 @@ services:
 
   grafana:
     <<: *default
-    image: '${IMAGE_REGISTRY}/saltbox-grafana-metric/grafana:${GRAFANA_IMAGE_TAG}'
+    image: '${IMAGE_REGISTRY}/saltbox-metric-compose/grafana:${GRAFANA_IMAGE_TAG}'
     environment:
       GF_SERVER_PROTOCOL: 'http'
       GF_SERVER_SERVE_FROM_SUB_PATH: true
@@ -120,7 +120,7 @@ services:
 
   grafana-loki:
     <<: *default
-    image: '${IMAGE_REGISTRY}/saltbox-grafana-metric/grafana-loki:${GRAFANA_IMAGE_TAG}'
+    image: '${IMAGE_REGISTRY}/saltbox-metric-compose/grafana-loki:${GRAFANA_IMAGE_TAG}'
     expose:
       - '3100'
     volumes:
@@ -128,7 +128,7 @@ services:
 
   promtail:
     <<: *default
-    image: '${IMAGE_REGISTRY}/saltbox-grafana-metric/promtail:${METRIC_OBSERVABILITY_IMAGE_TAG}'
+    image: '${IMAGE_REGISTRY}/saltbox-metric-compose/promtail:${METRIC_OBSERVABILITY_IMAGE_TAG}'
     expose:
       - '9080'
     volumes:
@@ -138,7 +138,7 @@ services:
 
   prometheus:
       <<: *default
-      image: '${IMAGE_REGISTRY}/saltbox-grafana-metric/prometheus:${METRIC_OBSERVABILITY_IMAGE_TAG}'
+      image: '${IMAGE_REGISTRY}/saltbox-metric-compose/prometheus:${METRIC_OBSERVABILITY_IMAGE_TAG}'
       environment:
         WEB_SERVER_OUTER_SOCKET: "${WEB_SERVER_OUTER_SOCKET}"
       ports:
