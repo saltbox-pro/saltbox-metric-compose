@@ -2,6 +2,7 @@ x-default-service: &default
   restart: 'always'
   stop_grace_period: ${STOP_GRACE_PERIOD}
 
+
 services:
   saltbox-metric: &metric
     <<: *default
@@ -20,7 +21,7 @@ services:
       KEYCLOAK_SERVER_URL: 'http://keycloak:8080${KEYCLOAK_BASE_URL}'
       KEYCLOAK_REALM: '${KEYCLOAK_REALM}'
       KEYCLOAK_CLIENT: '${KEYCLOAK_CLIENT}'
-      # Gateway environment variables
+      #NOTE: Gateway environment variables
       DISCOVERY_SERVER_SCHEME: 'https'
       DISCOVERY_SERVER_WS_SCHEME: 'wss'
       DISCOVERY_SERVER_OUTER_SOCKET: '${WEB_SERVER_OUTER_SOCKET}'
@@ -46,7 +47,7 @@ services:
       - redis_salt_password
       - keycloak_client_saltbox_core_password
     expose:
-      - '${CORE_PORT}'  # FIXME Inentory looks to have own backend port variable
+      - '${CORE_PORT}'  #FIXME: Inentory looks to have own backend port variable
     depends_on:
       redis-taskiq:
         condition: service_started
@@ -78,8 +79,7 @@ services:
 
   grafana:
     <<: *default
-    build: 
-      context: '${METRIC_OUTER_PATH}'
+    image: '${IMAGE_REGISTRY}/saltbox-grafana-metric/grafana:${GRAFANA_IMAGE_TAG}'
     environment:
       GF_SERVER_PROTOCOL: 'http'
       GF_SERVER_SERVE_FROM_SUB_PATH: true
@@ -120,50 +120,30 @@ services:
 
   grafana-loki:
     <<: *default
-    image: grafana/loki:3.4.5
+    image: '${IMAGE_REGISTRY}/saltbox-grafana-metric/grafana-loki:${GRAFANA_IMAGE_TAG}'
     expose:
       - '3100'
     volumes:
-      - '${METRIC_OUTER_PATH}/metric.d/grafana/datasources/grafana-loki.yaml:/etc/loki/config.yaml:ro'
       - 'grafana_loki_data:/data/grafana_loki'
-    healthcheck:
-      test: wget --quiet --tries=1 --output-document=- http://localhost:3100/ready | grep -q -w ready || exit 1
-      start_period: 10s
-      interval: 10s
-      timeout: 5s
-      retries: 3
 
   promtail:
     <<: *default
-    image: grafana/promtail:3.4.5
-    command:
-      - '-config.expand-env=true'
-      - '-config.file=/etc/promtail/config.yaml'
+    image: '${IMAGE_REGISTRY}/saltbox-grafana-metric/promtail/:${METRIC_OBSERVABILITY_IMAGE_TAG}'
     expose:
       - '9080'
     volumes:
       - 'promtail_data:/data/promtail'
       - '${METRIC_DOCKER_SOCKET}:/var/run/docker.sock'
       - '${METRIC_DOCKER_CONTAINERS_PATH}:/var/lib/docker/containers:ro'
-      - '${METRIC_OUTER_PATH}/metric.d/promtail.yaml:/etc/promtail/config.yaml:ro'
-    healthcheck:
-          test: ["CMD-SHELL", "bash -c 'printf \"GET / HTTP/1.1\n\n\" > /dev/tcp/127.0.0.1/9080; exit $?;'"]
-          start_period: 10s
-          interval: 10s
-          timeout: 5s
-          retries: 3
 
   prometheus:
       <<: *default
-      image: prom/prometheus:v3.5.0
-      command:
-        - '--web.external-url=https://${WEB_SERVER_OUTER_SOCKET}/prometheus/'
-        - '--web.route-prefix=/prometheus/'
-        - '--config.file=/etc/prometheus/prometheus.yml'
+      image: '${IMAGE_REGISTRY}/saltbox-grafana-metric/prometheus:${METRIC_OBSERVABILITY_IMAGE_TAG}'
+      environment:
+        WEB_SERVER_OUTER_SOCKET: "${WEB_SERVER_OUTER_SOCKET}"
       ports:
         - '9090:9090'
       volumes:
-        - '${METRIC_OUTER_PATH}/metric.d/prometheus.yml:/etc/prometheus/prometheus.yml:ro'
         - 'prometheus_data:/data/prometheus'
 
 volumes:
