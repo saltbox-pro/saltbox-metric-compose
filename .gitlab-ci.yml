@@ -1,45 +1,37 @@
 include:
-  # Requires standard stage `test`
+  - project: 'saltbox/ci-lib'
+    file: 'build-image.yml'
   - project: 'saltbox/ci-lib'
     file: 'def-branch-merge-guard.yml'
-
-
-stages:
-  - build
-
-
-.default:
-  extends: .build-image
-  dependencies: []
+    rules:
+      - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+        when: never
+      - when: always
 
 
 .build-grafana-image:
-  extends: .default
-  stage: build
+  extends: .build-image
   variables:
     DOCKERFILE: './grafana/Dockerfile'
     REGISTRY_ADDITIONAL_PATH: '/grafana'
 
 
 .build-grafana-loki-image:
-  extends: .default
-  stage: build
+  extends: .build-image
   variables:
     DOCKERFILE: './grafana_loki/Dockerfile'
     REGISTRY_ADDITIONAL_PATH: '/grafana-loki'
 
 
 .build-prometheus-image:
-  extends: .default
-  stage: build
+  extends: .build-image
   variables:
     DOCKERFILE: './grafana/Dockerfile'
     REGISTRY_ADDITIONAL_PATH: '/prometheus'
 
 
 .build-promtail-image:
-  extends: .default
-  stage: build
+  extends: .build-image
   variables:
     DOCKERFILE: './promtail/Dockerfile'
     REGISTRY_ADDITIONAL_PATH: '/promtail'
