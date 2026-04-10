@@ -1,0 +1,20 @@
+services:
+  grafana:
+    build:
+      context: "${METRIC_OUTER_PATH}"
+      dockerfile: ./grafana/Dockerfile
+
+  grafana-loki:
+    build:
+      context: "${METRIC_OUTER_PATH}"
+      dockerfile: ./grafana_loki/Dockerfile
+
+  prometheus:
+    build:
+      context: "${METRIC_OUTER_PATH}"
+      dockerfile: ./prometheus/Dockerfile
+
+  promtail:
+    build:
+      context: "${METRIC_OUTER_PATH}"
+      dockerfile: ./promtail/Dockerfile
