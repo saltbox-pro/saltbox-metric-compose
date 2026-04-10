@@ -11,6 +11,7 @@
 COMPOSE_FILE="${COMPOSE_FILE}:../saltbox-metric-compose/compose.yaml"
 # Optional for development
 #COMPOSE_FILE="${COMPOSE_FILE}:../saltbox-metric-compose/compose-backend-dev.yaml"
+#COMPOSE_FILE="${COMPOSE_FILE}:../saltbox-metric-compose/compose-dev.yaml"
 
 # TODO Recheck the path
 # Multiple values separates by commas
