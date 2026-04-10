@@ -128,7 +128,7 @@ services:
 
   promtail:
     <<: *default
-    image: '${IMAGE_REGISTRY}/saltbox-grafana-metric/promtail/:${METRIC_OBSERVABILITY_IMAGE_TAG}'
+    image: '${IMAGE_REGISTRY}/saltbox-grafana-metric/promtail:${METRIC_OBSERVABILITY_IMAGE_TAG}'
     expose:
       - '9080'
     volumes:
