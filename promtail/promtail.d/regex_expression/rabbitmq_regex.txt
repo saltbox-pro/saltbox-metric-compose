@@ -1,0 +1,1 @@
+^(?P<timestamp>\S+ \S+)\s+\[(?P<level>\w+)\]\s+<(?P<pid>[^>]+)>\s+(?P<message>.*)\$

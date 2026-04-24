@@ -129,10 +129,13 @@ services:
   promtail:
     <<: *default
     image: '${IMAGE_REGISTRY}/saltbox-metric-compose/promtail:${METRIC_OBSERVABILITY_IMAGE_TAG}'
+    environment:
+      PROMTAIL_AUDIT_LOGS_STORAGE_PATH: '${PROMTAIL_AUDIT_LOGS_STORAGE_PATH}'
     expose:
       - '9080'
     volumes:
       - 'promtail_data:/data/promtail'
+      - '${AUDIT_LOGS_STORAGE_PATH}:${PROMTAIL_AUDIT_LOGS_STORAGE_PATH}:ro'
       - '${METRIC_DOCKER_SOCKET}:/var/run/docker.sock'
       - '${METRIC_DOCKER_CONTAINERS_PATH}:/var/lib/docker/containers:ro'
 
