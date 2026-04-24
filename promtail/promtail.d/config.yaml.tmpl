@@ -14,7 +14,7 @@ scrape_configs:
         labels:
           service: audit-events
           job: audit-events
-          __path__: '${PROMTAIL_AUDIT_LOGS_STORAGE_PATH}*.json'
+          __path__: '${PROMTAIL_AUDIT_LOGS_STORAGE_PATH}*.jsonl'
     pipeline_stages:
       - json:
           expressions:
