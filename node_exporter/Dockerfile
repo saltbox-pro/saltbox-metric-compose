@@ -1,0 +1,2 @@
+ARG BASE_IMG=quay.io/prometheus/node-exporter:v1.11.1
+FROM ${BASE_IMG}

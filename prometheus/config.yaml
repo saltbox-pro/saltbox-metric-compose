@@ -38,3 +38,7 @@ scrape_configs:
         regex: 'saltbox-(.+)'
         target_label: service
         replacement: '$1'
+
+  - job_name: node
+    static_configs:
+      - targets: ['host.saltbox:9100']

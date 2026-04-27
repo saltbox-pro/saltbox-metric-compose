@@ -141,6 +141,8 @@ services:
     image: '${IMAGE_REGISTRY}/saltbox-metric-compose/prometheus:${METRIC_OBSERVABILITY_IMAGE_TAG}'
     environment:
       WEB_SERVER_OUTER_SOCKET: "${WEB_SERVER_OUTER_SOCKET}"
+    extra_hosts:
+      - "host.saltbox:host-gateway"
     ports:
       - '9090:9090'
     volumes:
@@ -159,6 +161,18 @@ services:
     depends_on:
       prometheus:
         condition: service_started
+
+  node-exporter:
+    <<: *default
+    image: '${IMAGE_REGISTRY}/saltbox-metric-compose/node-exporter:${METRIC_OBSERVABILITY_IMAGE_TAG}'
+    command:
+      - '--path.rootfs=/host'
+    expose:
+      - '9100'
+    network_mode: host
+    pid: host
+    volumes:
+      - '/:/host:ro,rslave'
 
 volumes:
   saltbox_metric_var: {}
