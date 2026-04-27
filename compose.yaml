@@ -137,14 +137,28 @@ services:
       - '${METRIC_DOCKER_CONTAINERS_PATH}:/var/lib/docker/containers:ro'
 
   prometheus:
-      <<: *default
-      image: '${IMAGE_REGISTRY}/saltbox-metric-compose/prometheus:${METRIC_OBSERVABILITY_IMAGE_TAG}'
-      environment:
-        WEB_SERVER_OUTER_SOCKET: "${WEB_SERVER_OUTER_SOCKET}"
-      ports:
-        - '9090:9090'
-      volumes:
-        - 'prometheus_data:/data/prometheus'
+    <<: *default
+    image: '${IMAGE_REGISTRY}/saltbox-metric-compose/prometheus:${METRIC_OBSERVABILITY_IMAGE_TAG}'
+    environment:
+      WEB_SERVER_OUTER_SOCKET: "${WEB_SERVER_OUTER_SOCKET}"
+    ports:
+      - '9090:9090'
+    volumes:
+      - 'prometheus_data:/data/prometheus'
+
+  cadvisor:
+    <<: *default
+    image: '${IMAGE_REGISTRY}/saltbox-metric-compose/cadvisor:${METRIC_OBSERVABILITY_IMAGE_TAG}'
+    expose:
+      - '8080'
+    volumes:
+      - /:/rootfs:ro
+      - '${METRIC_SYSFS_PATH}:/sys:ro'
+      - '${METRIC_DOCKER_SOCKET}:/var/run/docker.sock'
+      - '${METRIC_DOCKER_CONTAINERS_PATH}:/var/lib/docker/containers:ro'
+    depends_on:
+      prometheus:
+        condition: service_started
 
 volumes:
   saltbox_metric_var: {}

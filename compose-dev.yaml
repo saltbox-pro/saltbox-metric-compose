@@ -18,3 +18,8 @@ services:
     build:
       context: "${METRIC_OUTER_PATH}"
       dockerfile: ./promtail/Dockerfile
+
+  cadvisor:
+    build:
+      context: "${METRIC_OUTER_PATH}"
+      dockerfile: ./cadvisor/Dockerfile
