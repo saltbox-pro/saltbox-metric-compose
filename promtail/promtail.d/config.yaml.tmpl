@@ -14,17 +14,17 @@ scrape_configs:
 
     relabel_configs:
       - source_labels: ['__meta_docker_container_name']
-        regex: '/saltbox-(.+)-1' # e.g, replacement of the name container form 'saltbox-mongo-1' to 'mongo'
+        #NOTE: e.g, replacement of the name container form 'saltbox-mongo-1' to 'mongo'
+        regex: '/saltbox-(.+)-1'
         replacement: '$1'
         target_label: 'service'
 
       - source_labels: ['__meta_docker_container_name']
-        regex: '/saltbox-saltbox-(.+)-1' # e.g, replacement of the name container form 'saltbox-saltbox-core-1' to 'core'
+        regex: '/saltbox-saltbox-(.+)-1'
         replacement: '$1'
         target_label: 'service'
 
     pipeline_stages:
-
       - match:
           selector: '{service="rabbitmq"}'
           stages:
@@ -32,10 +32,11 @@ scrape_configs:
                 expressions:
                   log: log
             - regex:
-                expression: '^(?P<timestamp>\S+ \S+)\s+\[(?P<level>\w+)\]\s+<(?P<pid>[^>]+)>\s+(?P<message>.*)$'
+                expression: ${RABBITMQ_REGEX_EXPRESSION}
             - timestamp:
                 source: timestamp
-                format: RFC1123 # RFC1123: Mon, 02 Jan 2006 15:04:05 MST
+                #NOTE: RFC1123: Mon, 02 Jan 2006 15:04:05 MST
+                format: RFC1123
             - labels:
                 detected_level: level
                 pid:
@@ -49,7 +50,7 @@ scrape_configs:
                 expressions:
                   log: log
             - regex:
-                expression: '\{"t"\:\{"\$date"\:\"(?P<timestamp>[^"]+)\"\}\,"s"\:\"(?P<severity>[A-Z])\"\,\s*\"c\"\:\"(?P<category>[^\"]+)\",\s*\"id\"\:(?P<id>\d+),\s*\"ctx\"\:\"(?P<context>[^\"]+)\",\s*\"msg\"\:\"(?P<message>[^\"]+)\"\,\"attr\"\:\{(?P<attributes>.+)\}\}'
+                expression: ${MONGO_REGEX_EXPRESSION}
             - timestamp:
                 source: timestamp
                 format: RFC1123
@@ -69,7 +70,7 @@ scrape_configs:
                 expressions:
                   log: log
             - regex:
-                expression: '^(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3})\s+\x1b\[\d{1,2};\d{1,2}\;[[0-9]+m\[(?P<level>[A-Z]+)\s*\]\x1b\[0;0m\s+\x1b\[\d{1,2};\d{1,2}\;[[0-9]+m\[(?P<module>[^\]]+)\]\x1b\[0;[[0-9]+m\s+\x1b\[[0;[[0-9]+m(?P<message>.*?)\x1b\[0;[[0-9]+m\"(\s+\((?P<agent>[^\)]+)\))?$'
+                expression: ${METRIC_REGEX_EXPRESSION}
             - timestamp:
                 source: timestamp
                 format: RFC1123

@@ -1,5 +1,4 @@
-# TODO: Fix this! .env must be example.env
-#/.env
+/.env
 /images/
 /override.env
 _*

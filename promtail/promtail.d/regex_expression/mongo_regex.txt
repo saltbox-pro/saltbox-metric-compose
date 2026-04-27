@@ -1,0 +1,1 @@
+\{"t"\:\{"\$date"\:\"(?P<timestamp>[^"]+)\"\}\,"s"\:\"(?P<severity>[A-Z])\"\,\s*\"c\"\:\"(?P<category>[^\"]+)\",\s*\"id\"\:(?P<id>\d+),\s*\"ctx\"\:\"(?P<context>[^\"]+)\",\s*\"msg\"\:\"(?P<message>[^\"]+)\"\,\"attr\"\:\{(?P<attributes>.+)\}\}
