@@ -37,6 +37,13 @@ include:
     REGISTRY_ADDITIONAL_PATH: '/promtail'
 
 
+.build-cadvisor-image:
+  extends: .build-image
+  variables:
+    DOCKERFILE: './cadvisor/Dockerfile'
+    REGISTRY_ADDITIONAL_PATH: '/cadvisor'
+
+
 Build Grafana image for tag:
   extends: .build-grafana-image
   variables:
@@ -95,6 +102,22 @@ Build Grafana Loki image for tag:
 
 Build Grafana Loki image for branch:
   extends: .build-grafana-loki-image
+  variables:
+    IMAGE_TAG: '$CI_COMMIT_REF_NAME'
+  rules:
+    - if: '$CI_COMMIT_BRANCH'
+
+
+Build cAdvisor image for tag:
+  extends: .build-cadvisor-image
+  variables:
+    IMAGE_TAG: '$CI_COMMIT_TAG'
+  rules:
+    - if: '$CI_COMMIT_TAG'
+
+
+Build cAdvisor image for branch:
+  extends: .build-cadvisor-image
   variables:
     IMAGE_TAG: '$CI_COMMIT_REF_NAME'
   rules:
