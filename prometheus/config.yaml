@@ -20,3 +20,21 @@ scrape_configs:
   - job_name: 'cadvisor'
     static_configs:
       - targets: ['cadvisor:8080']
+    metric_relabel_configs:
+      - source_labels: [container_label_com_docker_compose_service]
+        target_label: service
+
+      - source_labels: [service, name]
+        regex: '^$;/?(.+)'
+        target_label: service
+        replacement: '$1'
+
+      - source_labels: [service]
+        regex: 'saltbox-(.+)-1'
+        target_label: service
+        replacement: '$1'
+
+      - source_labels: [service]
+        regex: 'saltbox-(.+)'
+        target_label: service
+        replacement: '$1'
