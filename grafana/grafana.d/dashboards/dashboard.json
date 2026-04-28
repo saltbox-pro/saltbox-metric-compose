@@ -39,126 +39,7 @@
         "type": "prometheus",
         "uid": "${ds_prometheus}"
       },
-      "description": "Resource pressure via PSI",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "decimals": 1,
-          "links": [],
-          "mappings": [],
-          "max": 1,
-          "min": 0,
-          "thresholds": {
-            "mode": "percentage",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "dark-yellow",
-                "value": 70
-              },
-              {
-                "color": "dark-red",
-                "value": 90
-              }
-            ]
-          },
-          "unit": "percentunit"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 3,
-        "x": 0,
-        "y": 1
-      },
-      "id": 29,
-      "options": {
-        "displayMode": "basic",
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": false
-        },
-        "maxVizHeight": 300,
-        "minVizHeight": 10,
-        "minVizWidth": 0,
-        "namePlacement": "auto",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showUnfilled": true,
-        "sizing": "auto",
-        "text": {},
-        "valueMode": "color"
-      },
-      "pluginVersion": "12.3.2+security-01",
-      "targets": [
-        {
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "rate(node_pressure_cpu_waiting_seconds_total{instance=\"$node\",job=\"$job\"}[$__rate_interval])",
-          "format": "time_series",
-          "instant": true,
-          "legendFormat": "CPU",
-          "range": false,
-          "refId": "A",
-          "step": 240
-        },
-        {
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "rate(node_pressure_memory_waiting_seconds_total{instance=\"$node\",job=\"$job\"}[$__rate_interval])",
-          "format": "time_series",
-          "instant": true,
-          "legendFormat": "Mem",
-          "range": false,
-          "refId": "B",
-          "step": 240
-        },
-        {
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "rate(node_pressure_io_waiting_seconds_total{instance=\"$node\",job=\"$job\"}[$__rate_interval])",
-          "format": "time_series",
-          "instant": true,
-          "legendFormat": "I/O",
-          "range": false,
-          "refId": "C",
-          "step": 240
-        },
-        {
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "rate(node_pressure_irq_stalled_seconds_total{instance=\"$node\",job=\"$job\"}[$__rate_interval])",
-          "format": "time_series",
-          "instant": true,
-          "legendFormat": "Irq",
-          "range": false,
-          "refId": "D",
-          "step": 240
-        }
-      ],
-      "title": "Pressure",
-      "type": "bargauge"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${ds_prometheus}"
-      },
-      "description": "Overall CPU busy percentage (averaged across all cores)",
+      "description": "Used Root FS",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -187,11 +68,11 @@
               },
               {
                 "color": "rgba(237, 129, 40, 0.89)",
-                "value": 85
+                "value": 80
               },
               {
                 "color": "rgba(245, 54, 54, 0.9)",
-                "value": 95
+                "value": 90
               }
             ]
           },
@@ -202,10 +83,10 @@
       "gridPos": {
         "h": 7,
         "w": 3,
-        "x": 3,
+        "x": 0,
         "y": 1
       },
-      "id": 30,
+      "id": 34,
       "options": {
         "minVizHeight": 75,
         "minVizWidth": 75,
@@ -226,15 +107,15 @@
         {
           "editorMode": "code",
           "exemplar": false,
-          "expr": "100 * (1 - avg(rate(node_cpu_seconds_total{mode=\"idle\",instance=\"$node\",job=\"$job\"}[$__rate_interval])))",
+          "expr": "(\n  (node_filesystem_size_bytes{instance=\"$node\", job=\"$job\", mountpoint=\"/\", fstype!=\"rootfs\"}\n   - node_filesystem_avail_bytes{instance=\"$node\", job=\"$job\", mountpoint=\"/\", fstype!=\"rootfs\"})\n  / node_filesystem_size_bytes{instance=\"$node\", job=\"$job\", mountpoint=\"/\", fstype!=\"rootfs\"}\n) * 100\n",
+          "format": "time_series",
           "instant": true,
-          "legendFormat": "",
           "range": false,
           "refId": "A",
           "step": 240
         }
       ],
-      "title": "CPU Busy",
+      "title": "Root FS Used",
       "type": "gauge"
     },
     {
@@ -286,7 +167,7 @@
       "gridPos": {
         "h": 7,
         "w": 3,
-        "x": 6,
+        "x": 3,
         "y": 1
       },
       "id": 31,
@@ -319,80 +200,6 @@
         }
       ],
       "title": "Sys Load",
-      "type": "gauge"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${ds_prometheus}"
-      },
-      "description": "Real RAM usage excluding cache and reclaimable memory",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "decimals": 1,
-          "mappings": [],
-          "max": 100,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "rgba(50, 172, 45, 0.97)",
-                "value": 0
-              },
-              {
-                "color": "rgba(237, 129, 40, 0.89)",
-                "value": 80
-              },
-              {
-                "color": "rgba(245, 54, 54, 0.9)",
-                "value": 90
-              }
-            ]
-          },
-          "unit": "percent"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 3,
-        "x": 9,
-        "y": 1
-      },
-      "id": 32,
-      "options": {
-        "minVizHeight": 75,
-        "minVizWidth": 75,
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true,
-        "sizing": "auto"
-      },
-      "pluginVersion": "12.3.2+security-01",
-      "targets": [
-        {
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "clamp_min((1 - (node_memory_MemAvailable_bytes{instance=\"$node\", job=\"$job\"} / node_memory_MemTotal_bytes{instance=\"$node\", job=\"$job\"})) * 100, 0)",
-          "format": "time_series",
-          "instant": true,
-          "range": false,
-          "refId": "B",
-          "step": 240
-        }
-      ],
-      "title": "RAM Used",
       "type": "gauge"
     },
     {
@@ -444,7 +251,7 @@
       "gridPos": {
         "h": 7,
         "w": 3,
-        "x": 12,
+        "x": 6,
         "y": 1
       },
       "id": 33,
@@ -483,7 +290,7 @@
         "type": "prometheus",
         "uid": "${ds_prometheus}"
       },
-      "description": "Used Root FS",
+      "description": "Overall CPU busy percentage (averaged across all cores)",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -512,11 +319,11 @@
               },
               {
                 "color": "rgba(237, 129, 40, 0.89)",
-                "value": 80
+                "value": 85
               },
               {
                 "color": "rgba(245, 54, 54, 0.9)",
-                "value": 90
+                "value": 95
               }
             ]
           },
@@ -526,11 +333,11 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 3,
-        "x": 15,
+        "w": 4,
+        "x": 9,
         "y": 1
       },
-      "id": 34,
+      "id": 30,
       "options": {
         "minVizHeight": 75,
         "minVizWidth": 75,
@@ -551,15 +358,89 @@
         {
           "editorMode": "code",
           "exemplar": false,
-          "expr": "(\n  (node_filesystem_size_bytes{instance=\"$node\", job=\"$job\", mountpoint=\"/\", fstype!=\"rootfs\"}\n   - node_filesystem_avail_bytes{instance=\"$node\", job=\"$job\", mountpoint=\"/\", fstype!=\"rootfs\"})\n  / node_filesystem_size_bytes{instance=\"$node\", job=\"$job\", mountpoint=\"/\", fstype!=\"rootfs\"}\n) * 100\n",
-          "format": "time_series",
+          "expr": "100 * (1 - avg(rate(node_cpu_seconds_total{mode=\"idle\",instance=\"$node\",job=\"$job\"}[$__rate_interval])))",
           "instant": true,
+          "legendFormat": "",
           "range": false,
           "refId": "A",
           "step": 240
         }
       ],
-      "title": "Root FS Used",
+      "title": "CPU Busy",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${ds_prometheus}"
+      },
+      "description": "Real RAM usage excluding cache and reclaimable memory",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 1,
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "rgba(50, 172, 45, 0.97)",
+                "value": 0
+              },
+              {
+                "color": "rgba(237, 129, 40, 0.89)",
+                "value": 80
+              },
+              {
+                "color": "rgba(245, 54, 54, 0.9)",
+                "value": 90
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 4,
+        "x": 13,
+        "y": 1
+      },
+      "id": 32,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sizing": "auto"
+      },
+      "pluginVersion": "12.3.2+security-01",
+      "targets": [
+        {
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "clamp_min((1 - (node_memory_MemAvailable_bytes{instance=\"$node\", job=\"$job\"} / node_memory_MemTotal_bytes{instance=\"$node\", job=\"$job\"})) * 100, 0)",
+          "format": "time_series",
+          "instant": true,
+          "range": false,
+          "refId": "B",
+          "step": 240
+        }
+      ],
+      "title": "RAM Used",
       "type": "gauge"
     },
     {
@@ -599,8 +480,8 @@
       },
       "gridPos": {
         "h": 4,
-        "w": 2,
-        "x": 18,
+        "w": 3,
+        "x": 17,
         "y": 1
       },
       "id": 35,
@@ -844,8 +725,8 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 2,
-        "x": 18,
+        "w": 3,
+        "x": 17,
         "y": 5
       },
       "id": 39,
