@@ -2024,7 +2024,7 @@
         {
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "ceil(increase(job_new_total[$__range]))",
+          "expr": "ceil(increase(job_new_total[$__range])) + 1",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "legendFormat": "__auto",
