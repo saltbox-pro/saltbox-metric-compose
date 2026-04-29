@@ -18,6 +18,7 @@ scrape_configs:
       - targets: ["saltbox-gateway:8001"]
 
   - job_name: 'cadvisor'
+    scrape_interval: 30s
     static_configs:
       - targets: ['cadvisor:8080']
     metric_relabel_configs:
