@@ -1,6 +1,6 @@
 ARG BASE_IMG="grafana/grafana:12.3.2-security-01"
 
-FROM "${BASE_IMG}"
+FROM ${BASE_IMG}
 
 ARG MAIN_DASHBOARD_OUTER_PATH=./grafana/grafana.d/dashboards/dashboard.json
 ARG MAIN_DASHBOARD_INNER_PATH=/etc/grafana/provisioning/dashboards/dashboard.json

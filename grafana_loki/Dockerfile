@@ -1,6 +1,6 @@
 ARG BASE_IMG="grafana/loki:3.4.5"
 
-FROM "${BASE_IMG}"
+FROM ${BASE_IMG}
 
 COPY --chmod=644 ./grafana_loki/config.yaml /etc/loki/config.yaml
 COPY --chmod=755 ./base_healthcheck.sh /usr/local/bin/
