@@ -158,6 +158,7 @@ services:
       - '${METRIC_SYSFS_PATH}:/sys:ro'
       - '${METRIC_DOCKER_SOCKET}:/var/run/docker.sock'
       - '${METRIC_DOCKER_CONTAINERS_PATH}:/var/lib/docker/containers:ro'
+      - '${METRIC_CONTAINERD_SOCKET}:/run/containerd/containerd.sock'
     depends_on:
       prometheus:
         condition: service_started
