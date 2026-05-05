@@ -28,3 +28,8 @@ services:
     build:
       context: "${METRIC_OUTER_PATH}"
       dockerfile: ./node_exporter/Dockerfile
+
+  mongo-exporter:
+    build:
+      context: "${METRIC_OUTER_PATH}"
+      dockerfile: ./mongo_exporter/Dockerfile

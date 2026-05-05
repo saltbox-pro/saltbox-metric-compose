@@ -51,6 +51,13 @@ include:
     REGISTRY_ADDITIONAL_PATH: '/node-exporter'
 
 
+.build-mongo-exporter-image:
+  extends: .build-image
+  variables:
+    DOCKERFILE: './mongo_exporter/Dockerfile'
+    REGISTRY_ADDITIONAL_PATH: '/mongo-exporter'
+
+
 Build Grafana image for tag:
   extends: .build-grafana-image
   variables:
@@ -141,6 +148,22 @@ Build Node Exporter image for tag:
 
 Build Node Exporter image for branch:
   extends: .build-node-exporter-image
+  variables:
+    IMAGE_TAG: '$CI_COMMIT_REF_NAME'
+  rules:
+    - if: '$CI_COMMIT_BRANCH'
+
+
+Build Mongo Exporter image for tag:
+  extends: .build-mongo-exporter-image
+  variables:
+    IMAGE_TAG: '$CI_COMMIT_TAG'
+  rules:
+    - if: '$CI_COMMIT_TAG'
+
+
+Build Mongo Exporter image for branch:
+  extends: .build-mongo-exporter-image
   variables:
     IMAGE_TAG: '$CI_COMMIT_REF_NAME'
   rules:

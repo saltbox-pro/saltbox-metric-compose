@@ -175,6 +175,24 @@ services:
     volumes:
       - '/:/host:ro,rslave'
 
+  mongo-exporter:
+    <<: *default
+    image: '${IMAGE_REGISTRY}/saltbox-metric-compose/mongo-exporter:${METRIC_OBSERVABILITY_IMAGE_TAG}'
+    environment:
+      MONGO_USER: '${MONGO_EXPORTER}'
+      MONGO_HOSTNAME: '${MONGO_HOSTNAME}'
+      MONGO_AUDIT_HOSTNAME: '${MONGO_AUDIT_HOSTNAME}'
+      MONGO_REPLICA_SET: '${MONGO_REPLICA_SET}'
+      MONGO_AUDIT_REPLICA_SET: '${MONGO_AUDIT_REPLICA_SET}'
+    expose:
+      - '9216'
+    secrets:
+      - mongo_exporter_password
+    depends_on:
+      mongo:
+        condition: service_healthy
+        restart: false
+
 volumes:
   saltbox_metric_var: {}
   grafana_var: {}
