@@ -67,4 +67,75 @@ groups:
             summary: Высокая нагрузка на CPU в контейнере {{ $labels.service }}
           isPaused: false
           notification_settings:
-            receiver: "[MAIN] Email Receiver"
+            receiver: '[MAIN] Email Receiver'
+    - orgId: 1
+      name: docker-ram
+      folder: Docker
+      interval: 1m
+      rules:
+        - uid: cfmipxb86p91cc
+          title: Memory Usage Docker
+          condition: C
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 10800
+                to: 0
+              datasourceUid: PBFA97CFB590B2093
+              model:
+                datasource:
+                    type: prometheus
+                    uid: PBFA97CFB590B2093
+                editorMode: code
+                expr: |-
+                    container_memory_usage_bytes{name=~".+"}
+                      / scalar(node_memory_MemTotal_bytes) * 100
+                instant: true
+                interval: ""
+                intervalFactor: 2
+                intervalMs: 15000
+                legendFormat: '{{service}}'
+                maxDataPoints: 43200
+                metric: container_memory_usage_bytes
+                range: false
+                refId: A
+                step: 10
+            - refId: C
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 60
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          dashboardUid: salt_box
+          panelId: 26
+          noDataState: NoData
+          execErrState: Error
+          for: 2m
+          keepFiringFor: 5m
+          annotations:
+            __dashboardUid__: salt_box
+            __panelId__: "26"
+            description: "Алерт срабатывает, когда потребление памяти Docker-контейнера превышает 60% \nот общего объёма RAM сервера"
+            summary: Контейнер {{ $labels.service }} потребляет {{ $values.A.Value | printf "%.1f" }}% RAM сервера
+          isPaused: false
+          notification_settings:
+            receiver: '[MAIN] Email Receiver'
