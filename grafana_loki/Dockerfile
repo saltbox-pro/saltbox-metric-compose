@@ -3,7 +3,7 @@ ARG BASE_IMG="grafana/loki:3.4.5"
 FROM ${BASE_IMG}
 
 COPY --chmod=644 ./grafana_loki/config.yaml /etc/loki/config.yaml
-COPY --chmod=755 ./base_healthcheck.sh /usr/local/bin/
+COPY --chmod=755 ./bin/base_healthcheck.sh /usr/local/bin/
 
 ENV HEALTHCHECK_ENDPOINT=http://localhost:3100/ready
 ENV HEALTHCHECK_TITLE="GET /ready"

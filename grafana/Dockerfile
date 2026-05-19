@@ -2,8 +2,15 @@ ARG BASE_IMG="grafana/grafana:12.3.2-security-01"
 
 FROM ${BASE_IMG}
 
+USER root
+RUN apk add --no-cache gettext
+USER grafana
+
 ARG MAIN_DASHBOARD_OUTER_PATH=./grafana/grafana.d/dashboards/dashboard.json
 ARG MAIN_DASHBOARD_INNER_PATH=/etc/grafana/provisioning/dashboards/dashboard.json
+
+ARG CONTACT_POINTS_TMPL_OUTER_PATH=./grafana/grafana.d/alerting/contact-points.yaml.tmpl
+ARG CONTACT_POINTS_TMPL_INNER_PATH=/etc/grafana/provisioning/alerting/contact-points.yaml.tmpl
 
 ARG DASHBOARDS_OUTER_PATH=./grafana/grafana.d/dashboards/dashboard.yaml
 ARG DASHBOARDS_INNER_PATH=/etc/grafana/provisioning/dashboards/dashboard.yaml
@@ -11,32 +18,11 @@ ARG DASHBOARDS_INNER_PATH=/etc/grafana/provisioning/dashboards/dashboard.yaml
 ARG DATASOURCES_OUTER_PATH=./grafana/grafana.d/datasources.yaml
 ARG DATASOURCES_INNER_PATH=/etc/grafana/provisioning/datasources/datasources.yaml
 
-ENV GF_SERVER_PROTOCOL=''
-ENV GF_SERVER_SERVE_FROM_SUB_PATH=''
-ENV GF_SERVER_DOMAIN=''
-ENV GF_SERVER_ROOT_URL=''
-ENV GF_AUTH_ANONYMOUS_ENABLED=''
-ENV GF_AUTH_BASIC_ENABLED=''
-ENV GF_AUTH_DISABLE_LOGIN_FORM=''
-ENV GF_AUTH_GENERIC_OAUTH_ENABLED=''
-ENV GF_AUTH_GENERIC_OAUTH_AUTO_LOGIN=''
-ENV GF_AUTH_GENERIC_OAUTH_ALLOW_SIGN_UP=''
-ENV GF_AUTH_GENERIC_OAUTH_ALLOW_ASSIGN_GRAFANA_ADMIN=''
-ENV GF_AUTH_GENERIC_OAUTH_USE_TOKEN_INFO_ENDPOIT=''
-ENV GF_AUTH_GENERIC_OAUTH_CLIENT_ID=''
-ENV GF_AUTH_GENERIC_OAUTH_NAME_ATTRIBUTE_PATH=''
-ENV GF_AUTH_GENERIC_OAUTH_LOGIN_ATTRIBUTE_PATH=''
-ENV GF_AUTH_GENERIC_OAUTH_EMAIL_ATTRIBUTE_PATH=''
-ENV GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET__FILE=''
-ENV GF_AUTH_GENERIC_OAUTH_SCOPES=''
-ENV GF_AUTH_GENERIC_OAUTH_AUTH_URL=''
-ENV GF_AUTH_GENERIC_OAUTH_TOKEN_URL=''
-ENV GF_AUTH_GENERIC_OAUTH_API_URL=''
-ENV GF_AUTH_GENERIC_OAUTH_ROLE_ATTRIBUTE_PATH=''
-ENV GF_LOG_LEVEL=''
-
 COPY --chmod=644 "${MAIN_DASHBOARD_OUTER_PATH}" \
     "${MAIN_DASHBOARD_INNER_PATH}"
+
+COPY --chmod=644 "${CONTACT_POINTS_TMPL_OUTER_PATH}" \
+    "${CONTACT_POINTS_TMPL_INNER_PATH}"
 
 COPY --chmod=444 "${DASHBOARDS_OUTER_PATH}" \
     "${DASHBOARDS_INNER_PATH}"
@@ -44,7 +30,8 @@ COPY --chmod=444 "${DASHBOARDS_OUTER_PATH}" \
 COPY --chmod=444 "${DATASOURCES_OUTER_PATH}" \
     "${DATASOURCES_INNER_PATH}"
 
-COPY --chmod=755 ./base_healthcheck.sh /usr/local/bin/
+COPY --chmod=755 ./grafana/entrypoint.sh /usr/local/bin/
+COPY --chmod=755 ./bin/base_healthcheck.sh /usr/local/bin/
 
 ENV HEALTHCHECK_ENDPOINT=http://localhost:3000/api/health
 ENV HEALTHCHECK_TITLE="GET /api/health"
@@ -59,4 +46,4 @@ HEALTHCHECK \
 
 EXPOSE 3000
 
-CMD [ "/run.sh" ]
+ENTRYPOINT [ "/usr/local/bin/entrypoint.sh" ]

@@ -1,0 +1,10 @@
+apiVersion: 1
+contactPoints:
+  - orgId: 1
+    name: [MAIN] Email Receiver
+    receivers:
+      - uid: email_receiver
+        type: email
+        settings:
+          addresses: ${GF_SMTP_ALERT_EMAILS}
+        disableResolveMessage: false
