@@ -18,6 +18,12 @@ ARG DASHBOARDS_INNER_PATH=/etc/grafana/provisioning/dashboards/dashboard.yaml
 ARG DATASOURCES_OUTER_PATH=./grafana/grafana.d/datasources.yaml
 ARG DATASOURCES_INNER_PATH=/etc/grafana/provisioning/datasources/datasources.yaml
 
+ARG ALERT_RULES_OUTER_PATH=./grafana/grafana.d/alerting/alert-rules.yaml
+ARG ALERT_RULES_INNER_PATH=/etc/grafana/provisioning/alerting/alert-rules.yaml
+
+COPY --chmod=444 "${ALERT_RULES_OUTER_PATH}" \
+  "${ALERT_RULES_INNER_PATH}"
+
 COPY --chmod=644 "${MAIN_DASHBOARD_OUTER_PATH}" \
     "${MAIN_DASHBOARD_INNER_PATH}"
 

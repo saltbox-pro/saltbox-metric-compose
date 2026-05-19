@@ -1,0 +1,70 @@
+apiVersion: 1
+groups:
+    - orgId: 1
+      name: docker-containers
+      folder: Docker
+      interval: 1m
+      rules:
+        - uid: bfmige7il0a2oa
+          title: CPU Usage
+          condition: C
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 10800
+                to: 0
+              datasourceUid: PBFA97CFB590B2093
+              model:
+                datasource:
+                    type: prometheus
+                    uid: PBFA97CFB590B2093
+                editorMode: code
+                expr: rate(container_cpu_user_seconds_total{image!=""}[5m]) * 100
+                instant: true
+                interval: ""
+                intervalFactor: 2
+                intervalMs: 15000
+                legendFormat: '{{service}}'
+                maxDataPoints: 43200
+                metric: cpu
+                range: false
+                refId: A
+                step: 10
+            - refId: C
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 79
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          dashboardUid: salt_box
+          panelId: 25
+          noDataState: NoData
+          execErrState: Error
+          for: 5m
+          annotations:
+            __dashboardUid__: salt_box
+            __panelId__: "25"
+            description: "Алерт срабатывает, когда нагрузка CPU в Docker-контейнере превышает 79% \nна протяжении 5 минут\n\nКонтейнер: {{ $labels.service }}\nТекущее значение: {{ $values.A.Value | printf \"%.1f\" }}%"
+            summary: Высокая нагрузка на CPU в контейнере {{ $labels.service }}
+          isPaused: false
+          notification_settings:
+            receiver: "[MAIN] Email Receiver"
