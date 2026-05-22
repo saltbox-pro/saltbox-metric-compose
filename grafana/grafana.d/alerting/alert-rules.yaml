@@ -57,7 +57,7 @@ groups:
                 type: threshold
           dashboardUid: salt_box
           panelId: 25
-          noDataState: NoData
+          noDataState: OK
           execErrState: Error
           for: 5m
           annotations:
@@ -127,7 +127,7 @@ groups:
                 type: threshold
           dashboardUid: salt_box
           panelId: 26
-          noDataState: NoData
+          noDataState: OK
           execErrState: Error
           for: 2m
           keepFiringFor: 5m
@@ -197,7 +197,7 @@ groups:
                 type: threshold
           dashboardUid: salt_box
           panelId: 14
-          noDataState: NoData
+          noDataState: OK
           execErrState: Error
           for: 2m
           keepFiringFor: 5m
@@ -340,7 +340,7 @@ groups:
                 type: threshold
           dashboardUid: salt_box
           panelId: 40
-          noDataState: NoData
+          noDataState: OK
           execErrState: Error
           for: 5m
           annotations:
@@ -409,7 +409,7 @@ groups:
                 type: threshold
           dashboardUid: salt_box
           panelId: 41
-          noDataState: NoData
+          noDataState: OK
           execErrState: Error
           for: 2m
           keepFiringFor: 5m
