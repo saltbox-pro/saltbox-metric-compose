@@ -140,6 +140,151 @@ groups:
           notification_settings:
             receiver: '[MAIN] Email Receiver'
     - orgId: 1
+      name: backend
+      folder: Salt.Box
+      interval: 1m
+      rules:
+        - uid: bfmj2hszbgdmof
+          title: HTTP 5xx %
+          condition: C
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 10800
+                to: 0
+              datasourceUid: PBFA97CFB590B2093
+              model:
+                datasource:
+                    type: prometheus
+                    uid: PBFA97CFB590B2093
+                editorMode: code
+                expr: |-
+                    sum by(endpoint) (http_request_endpoint_count{status_code=~"5.*"})
+                    /
+                    sum by(endpoint) (http_request_endpoint_count)
+                    * 100
+                instant: true
+                interval: ""
+                intervalMs: 15000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: A
+            - refId: C
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 5
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          dashboardUid: salt_box
+          panelId: 14
+          noDataState: NoData
+          execErrState: Error
+          for: 2m
+          keepFiringFor: 5m
+          annotations:
+            __dashboardUid__: salt_box
+            __panelId__: "14"
+            description: |-
+                Алерт срабатывает, когда доля 5xx ответов превышает 5%
+                на протяжении 2 минут
+
+                Эндпоинт: {{ $labels.endpoint }}
+                Процент ошибок: {{ $values.A.Value | printf "%.1f" }}%
+            summary: 'Высокий процент 5xx ошибок на эндпоинте {{ $labels.endpoint }}: {{ $values.A.Value | printf "%.1f" }}%'
+          isPaused: false
+          notification_settings:
+            receiver: '[MAIN] Email Receiver'
+    - orgId: 1
+      name: backend-container-live-status
+      folder: Salt.Box
+      interval: 1m
+      rules:
+        - uid: efmspisog4qo0d
+          title: Service Running Status
+          condition: C
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 10800
+                to: 0
+              datasourceUid: PBFA97CFB590B2093
+              model:
+                datasource:
+                    type: prometheus
+                    uid: PBFA97CFB590B2093
+                editorMode: code
+                expr: (time() - container_last_seen{name!="", image!=""}) < bool 60
+                instant: true
+                interval: ""
+                intervalMs: 15000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: A
+            - refId: C
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 1
+                        type: lt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          dashboardUid: salt_box
+          panelId: 68
+          noDataState: NoData
+          execErrState: Error
+          for: 1m
+          keepFiringFor: 2m
+          annotations:
+            __dashboardUid__: salt_box
+            __panelId__: "68"
+            description: |-
+                Алерт срабатывает, когда контейнер перестаёт отвечать более 60 секунд.
+
+                Контейнер: {{ $labels.container_label_com_docker_compose_service }}
+                Образ: {{ $labels.image }}
+            summary: Контейнер {{ $labels.container_label_com_docker_compose_service }} упал !!!
+          isPaused: false
+          notification_settings:
+            receiver: '[MAIN] Email Receiver'
+    - orgId: 1
       name: host-cpu
       folder: Host
       interval: 1m
@@ -277,81 +422,6 @@ groups:
 
                 Текущее использование RAM: {{ $values.A.Value | printf "%.1f" }}%
             summary: 'Высокая нагрузка RAM на хосте: {{ $values.A.Value | printf "%.1f" }}%'
-          isPaused: false
-          notification_settings:
-            receiver: '[MAIN] Email Receiver'
-    - orgId: 1
-      name: backend
-      folder: Salt.Box
-      interval: 1m
-      rules:
-        - uid: bfmj2hszbgdmof
-          title: HTTP 5xx %
-          condition: C
-          data:
-            - refId: A
-              relativeTimeRange:
-                from: 10800
-                to: 0
-              datasourceUid: PBFA97CFB590B2093
-              model:
-                datasource:
-                    type: prometheus
-                    uid: PBFA97CFB590B2093
-                editorMode: code
-                expr: |-
-                    sum by(endpoint) (http_request_endpoint_count{status_code=~"5.*"})
-                    /
-                    sum by(endpoint) (http_request_endpoint_count)
-                    * 100
-                instant: true
-                interval: ""
-                intervalMs: 15000
-                legendFormat: __auto
-                maxDataPoints: 43200
-                range: false
-                refId: A
-            - refId: C
-              datasourceUid: __expr__
-              model:
-                conditions:
-                    - evaluator:
-                        params:
-                            - 5
-                        type: gt
-                      operator:
-                        type: and
-                      query:
-                        params:
-                            - C
-                      reducer:
-                        params: []
-                        type: last
-                      type: query
-                datasource:
-                    type: __expr__
-                    uid: __expr__
-                expression: A
-                intervalMs: 1000
-                maxDataPoints: 43200
-                refId: C
-                type: threshold
-          dashboardUid: salt_box
-          panelId: 14
-          noDataState: NoData
-          execErrState: Error
-          for: 2m
-          keepFiringFor: 5m
-          annotations:
-            __dashboardUid__: salt_box
-            __panelId__: "14"
-            description: |-
-                Алерт срабатывает, когда доля 5xx ответов превышает 5%
-                на протяжении 2 минут
-
-                Эндпоинт: {{ $labels.endpoint }}
-                Процент ошибок: {{ $values.A.Value | printf "%.1f" }}%
-            summary: 'Высокий процент 5xx ошибок на эндпоинте {{ $labels.endpoint }}: {{ $values.A.Value | printf "%.1f" }}%'
           isPaused: false
           notification_settings:
             receiver: '[MAIN] Email Receiver'
