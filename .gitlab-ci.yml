@@ -5,10 +5,8 @@ include:
     file: 'build-image.yml'
   - project: 'saltbox/ci-lib'
     file: 'def-branch-merge-guard.yml'
-    rules:
-      - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-        when: never
-      - when: always
+  - project: 'saltbox/ci-lib'
+    file: 'check-addon-image-tags.yml'
 
 
 .build-grafana-image:
