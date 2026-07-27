@@ -15,6 +15,8 @@ if possible and purge browser redirects.
 
 ### Added
 
+- Individual `METRIC_FRONTEND_IMAGE_TAG` variable
+
 
 ### Changed
 

@@ -69,7 +69,7 @@ services:
 
   saltbox-metric-frontend:
     <<: *default
-    image: '${IMAGE_REGISTRY}/saltbox-frontend-metric:${FRONTEND_IMAGE_TAG}'
+    image: '${IMAGE_REGISTRY}/saltbox-frontend-metric:${METRIC_FRONTEND_IMAGE_TAG}'
     expose:
       - ${FRONTEND_HTTP_PORT}
 
