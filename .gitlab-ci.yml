@@ -1,12 +1,21 @@
 ---
 
+stages:
+  - test
+  - build
+
 include:
   - project: 'saltbox/ci-lib'
     file: 'build-image.yml'
+
   - project: 'saltbox/ci-lib'
     file: 'def-branch-merge-guard.yml'
+
   - project: 'saltbox/ci-lib'
     file: 'check-addon-image-tags.yml'
+
+  - project: 'saltbox/ci-lib'
+    file: 'mirror-repo.yml'
 
 
 .build-grafana-image:
@@ -84,3 +93,8 @@ Build Node Exporter:
 
 Build Mongo Exporter image:
   extends: .build-mongo-exporter-image
+
+
+Mirror Repository:
+  extends: .mirror-repo
+  stage: build

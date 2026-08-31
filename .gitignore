@@ -9,3 +9,6 @@ _*
 .ruff.toml
 .mypy.ini
 .flake8
+
+# Other
+.DS_Store
