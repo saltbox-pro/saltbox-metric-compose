@@ -16,13 +16,27 @@ if possible and purge browser redirects.
 ### Added
 
 - Individual `METRIC_FRONTEND_IMAGE_TAG` variable
+- MongoDB exporter supports replica set of several members via `MONGO_HOSTS`,
+  `MONGO_AUDIT_HOSTS` or `MONGO_URI`, `MONGO_AUDIT_URI` variables, every
+  member is scraped separately.
 
 
 ### Changed
 
+- MongoDB metrics are scraped by single `mongodb` Prometheus job via exporter
+  `/scrapeall`, `instance` label is `host:port` of replica set member instead
+  of `Mongo` and `Mongo Audit`.
+
 
 ### Fixed
 
+- Prometheus data is stored in `prometheus_data` volume, previously it was
+  written to anonymous volume and lost on container recreation.
+- Grafana Loki data and Promtail positions are stored in `grafana_loki_data`
+  and `promtail_data` volumes, previously they were written to container
+  `/tmp` and lost on container recreation.
+- Grafana Loki 7 days retention is applied by compactor, `table_manager`
+  retention is ignored for `tsdb` index store and logs were kept forever.
 
 ### Removed
 - `compose.yaml`: rabbitmq dependency form `saltbox-metric` service

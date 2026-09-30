@@ -2,9 +2,29 @@
 
 set -e
 
-EXPORTER_PASSWORD_FILE="/run/secrets/mongo_exporter_password"
-EXPORTER_PASSWORD=$(cat "${EXPORTER_PASSWORD_FILE}")
-MONGO_URI="mongodb://${MONGO_USER}:${EXPORTER_PASSWORD}@${MONGO_HOSTNAME}:27017/admin?replicaSet=${MONGO_REPLICA_SET}&authSource=admin,mongodb://${MONGO_USER}:${EXPORTER_PASSWORD}@${MONGO_AUDIT_HOSTNAME}:27017/admin?replicaSet=${MONGO_AUDIT_REPLICA_SET}&authSource=admin"
+with_ports() {
+  hosts=''
+  for host in $(echo "$1" | tr ',' ' '); do
+    case "$host" in
+      *:*) ;;
+      *) host="${host}:27017" ;;
+    esac
+    hosts="${hosts:+${hosts},}${host}"
+  done
+  echo "$hosts"
+}
+
+if [ -z "$MONGO_URI" ]; then
+  MONGO_URI="mongodb://$(with_ports "$MONGO_HOSTS")/admin?replicaSet=${MONGO_REPLICA_SET}&authSource=admin"
+fi
+
+if [ -z "$MONGO_AUDIT_URI" ]; then
+  MONGO_AUDIT_URI="mongodb://$(with_ports "$MONGO_AUDIT_HOSTS")/admin?replicaSet=${MONGO_AUDIT_REPLICA_SET}&authSource=admin"
+fi
+
+MONGODB_USER="$MONGO_USER"
+MONGODB_PASSWORD=$(cat /run/secrets/mongo_exporter_password)
+export MONGODB_USER MONGODB_PASSWORD
 
 exec /opt/mongodb_exporter \
   --collector.diagnosticdata \
@@ -13,4 +33,5 @@ exec /opt/mongodb_exporter \
   --collector.topmetrics \
   --collector.currentopmetrics \
   --discovering-mode \
-  --mongodb.uri="${MONGO_URI}" \
+  --split-cluster \
+  --mongodb.uri="${MONGO_URI},${MONGO_AUDIT_URI}" \
