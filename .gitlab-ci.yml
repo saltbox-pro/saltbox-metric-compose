@@ -14,12 +14,6 @@ include:
   - project: 'saltbox/ci-lib'
     file: 'check-addon-image-tags.yml'
 
-  - project: 'saltbox/ci-lib'
-    file: 'mirror-repo.yml'
-
-  - project: 'saltbox/ci-lib'
-    file: 'close-github-pr.yml'
-
 
 .build-grafana-image:
   extends: .build-image
@@ -96,13 +90,3 @@ Build Node Exporter:
 
 Build Mongo Exporter image:
   extends: .build-mongo-exporter-image
-
-
-Mirror Repository:
-  extends: .mirror-repo
-  stage: build
-
-
-Check for GitHub PR to close:
-  extends: .close-github-pr
-  stage: build
