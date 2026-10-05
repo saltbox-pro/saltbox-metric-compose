@@ -204,10 +204,6 @@ services:
       - '9216'
     secrets:
       - mongo_exporter_password
-    depends_on:
-      mongo:
-        condition: service_healthy
-        restart: false
 
 volumes:
   saltbox_metric_var: {}
