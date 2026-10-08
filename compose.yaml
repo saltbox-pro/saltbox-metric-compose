@@ -202,6 +202,8 @@ services:
       MONGO_AUDIT_REPLICA_SET: '${MONGO_AUDIT_REPLICA_SET}'
     expose:
       - '9216'
+    volumes:
+      - '/etc/hosts:/etc/hosts:ro'
     secrets:
       - mongo_exporter_password
 
