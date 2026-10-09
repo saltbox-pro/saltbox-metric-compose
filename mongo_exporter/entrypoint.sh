@@ -71,28 +71,11 @@ if [ -n "${MONGO_HOSTS}" ]; then
   wait_for_hosts "${MONGO_HOSTS}"
 fi
 
-if [ -n "${MONGO_AUDIT_HOSTS}" ]; then
-  echo "Waiting for ${MONGO_AUDIT_HOSTS}"
-  wait_for_hosts "${MONGO_AUDIT_HOSTS}"
-fi
-
 if [ -z "${MONGO_URI}" ]; then
   MONGO_URI=$(build_mongo_uri "${MONGO_USER}" \
     "$(cat /run/secrets/mongo_exporter_password)" \
     "${MONGO_HOSTS}" \
     "${MONGO_REPLICA_SET}")
-fi
-
-if [ -z "${MONGO_AUDIT_URI}" ] && [ -n "${MONGO_AUDIT_HOSTS}" ]; then
-  MONGO_AUDIT_URI=$(build_mongo_uri "${MONGO_AUDIT_USER}" \
-    "$(cat /run/secrets/audit_mongo_exporter_password)" \
-    "${MONGO_AUDIT_HOSTS}" \
-    "${MONGO_AUDIT_REPLICA_SET}")
-fi
-
-_MONGO_URIS="${MONGO_URI}"
-if [ -n "${MONGO_AUDIT_URI}" ]; then
-  _MONGO_URIS="${_MONGO_URIS},${MONGO_AUDIT_URI}"
 fi
 
 exec /opt/mongodb_exporter \
@@ -102,5 +85,4 @@ exec /opt/mongodb_exporter \
   --collector.topmetrics \
   --collector.currentopmetrics \
   --discovering-mode \
-  --split-cluster \
-  --mongodb.uri="${_MONGO_URIS}" \
+  --mongodb.uri="${MONGO_URI}" \
