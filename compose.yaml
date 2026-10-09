@@ -21,16 +21,19 @@ services:
       LOG_LEVEL: '${METRIC_LOG_LEVEL:-info}'
       BASE_URL_ROOT_PATH: '${METRIC_BACKEND_PATH}'
       TIMEOUT_GRACEFUL_SHUTDOWN: '${BACKEND_SHUTDOWN_TIMEOUT_SEC}'
+
       BASIC_AUTH_USERNAME: '${BASIC_AUTH_USERNAME:-}'
       BASIC_AUTH_PASSWORD: '${BASIC_AUTH_PASSWORD:-}'
+
       REDIS_CA_CERT: '/etc/redis/certs/ca.crt'
       REDIS_URL: 'rediss://redis-salt:6379/2'
       REDIS_USERNAME: '${REDIS_SALT_USERNAME}'
+
       KEYCLOAK_FRONT_URL: 'https://${WEB_SERVER_OUTER_SOCKET}${KEYCLOAK_BASE_URL}'
       KEYCLOAK_SERVER_URL: 'http://keycloak:8080${KEYCLOAK_BASE_URL}'
       KEYCLOAK_REALM: '${KEYCLOAK_REALM}'
       KEYCLOAK_CLIENT: '${KEYCLOAK_CLIENT}'
-      #NOTE: Gateway environment variables
+
       DISCOVERY_SERVER_SCHEME: 'https'
       DISCOVERY_SERVER_WS_SCHEME: 'wss'
       DISCOVERY_SERVER_OUTER_SOCKET: '${WEB_SERVER_OUTER_SOCKET}'
@@ -56,7 +59,7 @@ services:
       - redis_salt_password
       - keycloak_client_saltbox_core_password
     expose:
-      - '${CORE_PORT}'  #FIXME: Inentory looks to have own backend port variable
+      - '${CORE_PORT}'
     depends_on:
       redis-taskiq:
         condition: service_started
@@ -91,6 +94,7 @@ services:
       GF_SERVER_SERVE_FROM_SUB_PATH: true
       GF_SERVER_DOMAIN: '${WEB_SERVER_OUTER_SOCKET}'
       GF_SERVER_ROOT_URL: 'https://${WEB_SERVER_OUTER_SOCKET}/grafana/'
+
       GF_AUTH_ANONYMOUS_ENABLED: false
       GF_AUTH_BASIC_ENABLED: false
       GF_AUTH_DISABLE_LOGIN_FORM: true
@@ -109,6 +113,7 @@ services:
       GF_AUTH_GENERIC_OAUTH_TOKEN_URL: 'http://keycloak:8080${KEYCLOAK_BASE_URL}/realms/${KEYCLOAK_REALM}/protocol/openid-connect/token'
       GF_AUTH_GENERIC_OAUTH_API_URL: 'http://keycloak:8080${KEYCLOAK_BASE_URL}/realms/${KEYCLOAK_REALM}/protocol/openid-connect/userinfo'
       GF_AUTH_GENERIC_OAUTH_ROLE_ATTRIBUTE_PATH: "contains(resource_access.grafana.roles, 'grafana_admin') && 'Admin' || 'Viewer'"
+
       GF_SMTP_ENABLED: true
       GF_SMTP_HOST: '${SMTP_HOST}'
       GF_SMTP_USER: '${SMTP_USER}'
@@ -116,6 +121,7 @@ services:
       GF_SMTP_ALERT_EMAILS: '${SMTP_ALERT_EMAILS}'
       GF_SMTP_FROM_NAME: 'Salt.Box Alerts'
       GF_SMTP_SKIP_VERIFY: false
+
       GF_LOG_LEVEL: '${METRIC_LOG_LEVEL:-info}'
     secrets:
       - keycloak_client_grafana_password
@@ -195,11 +201,8 @@ services:
     environment:
       MONGO_USER: '${MONGO_EXPORTER}'
       MONGO_HOSTS: '${MONGO_HOSTS:-${MONGO_HOSTNAME}}'
-      MONGO_AUDIT_HOSTS: '${MONGO_AUDIT_HOSTS:-${MONGO_AUDIT_HOSTNAME}}'
-      MONGO_URI: '${MONGO_URI:-}'
-      MONGO_AUDIT_URI: '${MONGO_AUDIT_URI:-}'
+      MONGO_URI: '${MONGO_URI}'
       MONGO_REPLICA_SET: '${MONGO_REPLICA_SET}'
-      MONGO_AUDIT_REPLICA_SET: '${MONGO_AUDIT_REPLICA_SET}'
     expose:
       - '9216'
     volumes:
