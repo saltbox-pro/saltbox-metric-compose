@@ -16,9 +16,12 @@ if possible and purge browser redirects.
 ### Added
 
 - Individual `METRIC_FRONTEND_IMAGE_TAG` variable
-- MongoDB exporter supports replica set of several members via `MONGO_HOSTS`,
-  `MONGO_AUDIT_HOSTS` or `MONGO_URI`, `MONGO_AUDIT_URI` variables, every
-  member is scraped separately.
+- MongoDB exporter supports replica set of several members via `MONGO_HOSTS`
+  or `MONGO_URI` variables, every member is scraped separately.
+- `compose.yaml`: mount host's `/etc/hosts` read-only into the
+  `mongo-exporter` container.
+- `mongo_exporter/entrypoint.sh`: wait for MongoDB hosts to become reachable
+  (retry with backoff) before building the connection URI.
 
 
 ### Changed
@@ -39,7 +42,14 @@ if possible and purge browser redirects.
   retention is ignored for `tsdb` index store and logs were kept forever.
 
 ### Removed
+
 - `compose.yaml`: rabbitmq dependency form `saltbox-metric` service
+- `compose.yaml`: `mongo-exporter` no longer depends on the local `mongo`
+  container healthcheck, so it also works when connecting to an external
+  MongoDB cluster.
+- MongoDB audit metrics exporting: `MONGO_AUDIT_HOSTS`, `MONGO_AUDIT_URI`,
+  `MONGO_AUDIT_REPLICA_SET` variables and the `--split-cluster` exporter mode,
+  now that `mongodb-audit` has been removed project-wide.
 
 
 ## [0.3.0] - 2026-07-10
