@@ -1,4 +1,19 @@
+<div align = right>
+
+&ensp;[<kbd> <br> EN <br> </kbd>](./README.md)&ensp;
+&ensp;[<kbd> <br> RU <br> </kbd>](./README_RU.md)&ensp;
+
+</div>
+
+---
+
 # Salt.Box Metric Compose
+
+## Table of Contents
+
+- **[How to run](#how-to-run)**
+- **[How to enable Grafana alerting](#how-to-enable-grafana-alerting)**
+
 
 ## How to run
 
@@ -20,8 +35,6 @@ _UPDATE_AND_RUN_EXTRA_ENV_FILES='../saltbox-metric-compose/.env'
 #METRIC_OUTER_PATH='../RELATIVE_TO_SALTBOX_COMPOSE'
 ```
 
-- Optionally add to `override.env` new values for the [`.env`](./.env) file.
-
 - Run the system with the helper script:
 
 ```sh
@@ -30,7 +43,7 @@ sudo ./bin/update_and_run.sh
 
 > **INFO** Error `/var/lib/docker/containers: permission denied` on start
 > usually means `$METRIC_DOCKER_*` variables of [`.env`](./.env) should be
-> overrided.
+> overridden.
 
 
 ## How to enable Grafana alerting
@@ -44,8 +57,8 @@ SMTP_FROM_ADDRESS='smtp_user@example.com'
 SMTP_ALERT_EMAILS='me@example.com;you@example.co'
 ```
 
-- `SMTP_FROM_ADDRESS` — the sender address shown in alert emails
-- `SMTP_ALERT_EMAILS` — semicolon-separated list of recipient addresses
+- `SMTP_FROM_ADDRESS` – the sender address shown in alert emails
+- `SMTP_ALERT_EMAILS` – semicolon-separated list of recipient addresses
 
 2. Set `grafana_smtp_password` secret in `saltbox-compose` to the password for `SMTP_HOST`:
 
@@ -53,15 +66,15 @@ SMTP_ALERT_EMAILS='me@example.com;you@example.co'
 echo -n 'your_smtp_password' > secrets/grafana_smtp_password
 ```
 
-3. Apply the changes on `saltbox-compose` directory.
+3. Apply the changes on the `saltbox-compose` directory.
 
-   - **If the system has not been started yet** — the secret will be picked up on first start:
+   - **If the system has not been started yet**, the secret will be picked up on first start:
 
      ```sh
      sudo ./bin/update_and_run.sh -l -d
      ```
 
-   - **If the system is already running** — the secret is mounted at container start, so Grafana must be explicitly restarted:
+   - **If the system is already running**, the secret is mounted at container start, so Grafana must be explicitly restarted:
 
      ```sh
      sudo ./bin/sb-compose.sh restart grafana
