@@ -161,6 +161,7 @@ services:
     image: '${IMAGE_REGISTRY}/saltbox-metric-compose/prometheus:${METRIC_OBSERVABILITY_IMAGE_TAG}'
     environment:
       WEB_SERVER_OUTER_SOCKET: "${WEB_SERVER_OUTER_SOCKET}"
+      STORAGE_RETENTION_TIME: "${PROMETHEUS_STORAGE_RETENTION_TIME}"
     extra_hosts:
       - "host.saltbox:host-gateway"
     ports:

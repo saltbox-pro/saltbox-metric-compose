@@ -22,6 +22,7 @@ if possible and purge browser redirects.
   `mongo-exporter` container.
 - `mongo_exporter/entrypoint.sh`: wait for MongoDB hosts to become reachable
   (retry with backoff) before building the connection URI.
+- `PROMETHEUS_STORAGE_RETENTION_TIME`: set storage retention time to 7 days by default
 
 
 ### Changed
@@ -29,6 +30,7 @@ if possible and purge browser redirects.
 - MongoDB metrics are scraped by single `mongodb` Prometheus job via exporter
   `/scrapeall`, `instance` label is `host:port` of replica set member instead
   of `Mongo` and `Mongo Audit`.
+- Increase Prometheus `scrape_interval` to `15` seconds
 
 
 ### Fixed
