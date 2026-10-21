@@ -11,7 +11,7 @@ __Some changes are breaking__. Cleanup Keycloak database before update
 if possible and purge browser redirects.
 
 
-## [x.x.x] - YYYY-MM-DD
+## [0.4.0] - 2026-10-13
 
 ### Added
 
